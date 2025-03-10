@@ -1,2 +1,2 @@
-# cheatsheey
+# cheatsheet
 study-notes
