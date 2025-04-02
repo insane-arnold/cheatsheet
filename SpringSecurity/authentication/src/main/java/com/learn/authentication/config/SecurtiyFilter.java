@@ -32,27 +32,17 @@ public class SecurtiyFilter {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http.csrf(customizer -> customizer.disable()) //disable csrf mode
-                .authorizeHttpRequests(customizer-> customizer.requestMatchers("/register","/login").permitAll() //allows register without authentication
-                        .anyRequest().authenticated())  //authenticates all request
-//        .formLogin(Customizer.withDefaults()) //enables form login form but not required for restAPI
+        return http.csrf(csrf -> csrf.disable()) //disable csrf mode
+                .authorizeHttpRequests(
+                        authorize-> authorize.requestMatchers("/auth/**").permitAll() //allows register without authentication
+                        .anyRequest().authenticated()
+                )  //authenticates all request
+//              .formLogin(Customizer.withDefaults()) //enables form login form but not required for restAPI
                 .httpBasic(Customizer.withDefaults()) // for RestAPIs otherwise will return HTML
                 .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // makes request stateless
+                .authenticationProvider(authenticationProvider) // custom authentication like username validation etc
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class) // calls jwtFilter before UsernamePasswordAuthenticationFilter
                 .build();
-//        http
-//                .csrf(csrf -> csrf.disable())
-//                .authorizeHttpRequests(authorize -> authorize
-//                        .requestMatchers("/auth/**").permitAll()
-//                        .anyRequest().authenticated()
-//                )
-//                .sessionManagement(session -> session
-//                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//                )
-//                .authenticationProvider(authenticationProvider)
-//                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-
-        return http.build();
     }
 
     @Bean
